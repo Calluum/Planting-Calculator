@@ -209,8 +209,8 @@ function drawDiagram(ip){
   document.getElementById('diagram').innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Plan view of rip layout">${tint}${lines}${dots}${dims}</svg>`;
 }
 document.querySelectorAll('.inp input').forEach(el=>{
-  el.addEventListener('focus',()=>{setTimeout(()=>{try{el.select();el.setSelectionRange(0,el.value.length);}catch(e){}},0);});
-  el.addEventListener('mouseup',e=>e.preventDefault());
+  el.addEventListener('focus',()=>{el.dataset.prev=el.value;el.value='';});
+  el.addEventListener('blur',()=>{if(el.value.trim()===''){el.value=el.dataset.prev||'';}recalc();});
 });
 setMode('twin');
 </script>
