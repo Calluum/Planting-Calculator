@@ -208,6 +208,10 @@ function drawDiagram(ip){
     <text class="dim-t" x="${rx-22}" y="${top+ipPx/2+4}" text-anchor="end">${(ip||0).toFixed(1)}</text>`;
   document.getElementById('diagram').innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Plan view of rip layout">${tint}${lines}${dots}${dims}</svg>`;
 }
+document.querySelectorAll('.inp input').forEach(el=>{
+  el.addEventListener('focus',()=>{setTimeout(()=>{try{el.select();el.setSelectionRange(0,el.value.length);}catch(e){}},0);});
+  el.addEventListener('mouseup',e=>e.preventDefault());
+});
 setMode('twin');
 </script>
 </body>
