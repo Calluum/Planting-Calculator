@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stems per hectare · planting calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFEDE4;
+    --card:#FBFAF5;
+    --ink:#22271E;
+    --text-2:#5C6156;
+    --muted:#B7B4A6;
+    --line:#8E9384;
+    --pine:#2C5039;
+    --pine-soft:#3E6B4C;
+    --ochre:#B06E2A;
+    --tint:rgba(44,80,57,0.06);
+    --border:rgba(34,39,30,0.14);
+    --radius:10px;
+    --sans:"IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#14170F;
+      --card:#1D2118;
+      --ink:#EAE9DF;
+      --text-2:#A9AC9E;
+      --muted:#565A4C;
+      --line:#5C6152;
+      --pine:#7CB68B;
+      --pine-soft:#6BA079;
+      --ochre:#D89A55;
+      --tint:rgba(124,182,139,0.10);
+      --border:rgba(234,233,223,0.16);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(16px,4vw,48px) 16px 64px;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+  header{margin-bottom:28px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--pine);
+    margin:0 0 6px;
+  }
+  h1{
+    font-size:clamp(26px,5vw,36px);
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0 0 6px;
+  }
+  .sub{color:var(--text-2);font-size:15px;margin:0;max-width:52ch;}
+
+  .toggle{display:flex;gap:0;margin:24px 0 20px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;width:fit-content;}
+  .toggle button{
+    font-family:var(--mono);font-size:13px;letter-spacing:0.02em;
+    padding:9px 18px;border:0;background:transparent;color:var(--text-2);
+    cursor:pointer;transition:background .15s,color .15s;
+  }
+  .toggle button+button{border-left:1px solid var(--border);}
+  .toggle button[aria-pressed="true"]{background:var(--pine);color:#FBFAF5;}
+  @media (prefers-color-scheme: dark){.toggle button[aria-pressed="true"]{color:#14170F;}}
+
+  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+  .field label{display:block;font-size:13px;font-weight:500;margin-bottom:6px;}
+  .field .hint{font-size:12px;color:var(--text-2);margin-top:5px;}
+  .inp{position:relative;}
+  .inp input{
+    width:100%;font-family:var(--mono);font-size:18px;font-weight:500;color:var(--ink);
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:11px 40px 11px 14px;outline:none;transition:border-color .15s,box-shadow .15s;
+  }
+  .inp input:focus{border-color:var(--pine);box-shadow:0 0 0 3px var(--tint);}
+  .inp .unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:13px;color:var(--muted);pointer-events:none;}
+  input[type=number]::-webkit-inner-spin-button{opacity:0.35;}
+
+  .result{
+    background:var(--card);border:1px solid var(--border);border-radius:14px;
+    padding:24px;margin-bottom:24px;display:flex;flex-wrap:wrap;align-items:flex-end;
+    gap:20px 40px;
+  }
+  .hero .n{font-family:var(--mono);font-size:clamp(44px,11vw,64px);font-weight:600;line-height:0.95;letter-spacing:-0.02em;color:var(--pine);}
+  .hero .u{font-family:var(--mono);font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-2);margin-top:8px;}
+  .working{font-family:var(--mono);font-size:13px;color:var(--text-2);margin-top:10px;}
+  .working b{color:var(--ochre);font-weight:500;}
+  .stats{display:flex;gap:28px;flex-wrap:wrap;margin-left:auto;}
+  .stat .sn{font-family:var(--mono);font-size:20px;font-weight:500;}
+  .stat .sl{font-size:12px;color:var(--text-2);letter-spacing:0.02em;}
+
+  .plan{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 16px 8px;}
+  .plan svg{width:100%;height:auto;display:block;}
+  .plan .cap{font-family:var(--mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);text-align:center;padding:6px 0 4px;}
+  .rip{stroke:var(--line);stroke-width:1.4;stroke-dasharray:2 4;}
+  .tree{fill:var(--pine);}
+  .band-tint{fill:var(--tint);}
+  .dim{stroke:var(--muted);stroke-width:1;}
+  .dim-t{fill:var(--text-2);font-family:var(--mono);font-size:11px;}
+  .dim-bg{fill:var(--card);}
+
+  .note{margin-top:24px;font-size:13.5px;color:var(--text-2);line-height:1.65;}
+  .note b{color:var(--ink);font-weight:500;}
+  footer{margin-top:32px;font-family:var(--mono);font-size:11px;letter-spacing:0.04em;color:var(--muted);text-align:center;}
+
+  @media (prefers-reduced-motion: no-preference){
+    .hero .n{transition:color .2s;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Silviculture · planting density</p>
+    <h1>Stems per hectare</h1>
+    <p class="sub">Enter your spacing and rip layout. Distances in metres.</p>
+  </header>
+
+  <div class="toggle" role="group" aria-label="Rip configuration">
+    <button id="btn-single" aria-pressed="false" onclick="setMode('single')">Single rips</button>
+    <button id="btn-twin" aria-pressed="true" onclick="setMode('twin')">Twin rips</button>
+  </div>
+
+  <div class="fields">
+    <div class="field">
+      <label for="ip">Interplant spacing</label>
+      <div class="inp"><input id="ip" type="number" value="2.0" min="0.1" step="0.1" oninput="recalc()"><span class="unit">m</span></div>
+      <div class="hint">between trees along a rip</div>
+    </div>
+
+    <div class="field single-only">
+      <label for="rs">Row spacing</label>
+      <div class="inp"><input id="rs" type="number" value="3.0" min="0.1" step="0.1" oninput="recalc()"><span class="unit">m</span></div>
+      <div class="hint">between adjacent rips</div>
+    </div>
+
+    <div class="field twin-only">
+      <label for="tw">Twin spacing</label>
+      <div class="inp"><input id="tw" type="number" value="0.8" min="0.1" step="0.1" oninput="recalc()"><span class="unit">m</span></div>
+      <div class="hint">between the two rips in a pair</div>
+    </div>
+
+    <div class="field twin-only">
+      <label for="gap">Between-pair gap</label>
+      <div class="inp"><input id="gap" type="number" value="3.6" min="0.1" step="0.1" oninput="recalc()"><span class="unit">m</span></div>
+      <div class="hint">last rip of a pair → first of next</div>
+    </div>
+  </div>
+
+  <div class="result">
+    <div class="hero">
+      <div class="n" id="out-sph">–</div>
+      <div class="u">stems / hectare</div>
+      <div class="working" id="out-working"></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="sn" id="out-area">–</div><div class="sl">m² per stem</div></div>
+      <div class="stat"><div class="sn" id="out-band">–</div><div class="sl" id="lbl-band">band pitch (m)</div></div>
+    </div>
+  </div>
+
+  <div class="plan">
+    <div id="diagram"></div>
+    <div class="cap">plan view — rips vertical, trees as dots</div>
+  </div>
+
+  <p class="note">
+    <b>A note on the twin distance.</b> Whether widening the twin gap adds stems depends on what your
+    ripper holds fixed. If the pass-to-pass interval is fixed, the band pitch above should match it, and
+    moving the twins apart only repositions the two rows inside each pass — density is unchanged. The twin
+    gap adds stems only when the between-pair gap stays fixed and the twins widen on top of it.
+  </p>
+
+  <footer>works offline · print to save as pdf</footer>
+</div>
+
+<script>
+let mode = 'twin';
+
+function setMode(m){
+  mode = m;
+  document.querySelectorAll('.single-only').forEach(e=>e.style.display = m==='single'?'':'none');
+  document.querySelectorAll('.twin-only').forEach(e=>e.style.display = m==='twin'?'':'none');
+  document.getElementById('btn-single').setAttribute('aria-pressed', m==='single');
+  document.getElementById('btn-twin').setAttribute('aria-pressed', m==='twin');
+  document.getElementById('lbl-band').textContent = m==='single' ? 'row spacing (m)' : 'band pitch (m)';
+  recalc();
+}
+
+function val(id){ const v = parseFloat(document.getElementById(id).value); return (isFinite(v) && v>0) ? v : 0; }
+const fmt = n => Math.round(n).toLocaleString('en-AU');
+
+function recalc(){
+  const ip = val('ip');
+  let sph=0, band=0, working='';
+  if(mode==='single'){
+    const rs = val('rs');
+    band = rs;
+    if(ip>0 && rs>0){
+      sph = 10000/(ip*rs);
+      working = `10,000 ÷ (${ip} × ${rs})`;
+    }
+  } else {
+    const tw = val('tw'), gap = val('gap');
+    band = tw + gap;
+    if(ip>0 && band>0){
+      sph = 20000/(ip*band);
+      working = `20,000 ÷ (${ip} × <b>${band.toFixed(1)}</b>)`;
+    }
+  }
+  const area = sph>0 ? 10000/sph : 0;
+  document.getElementById('out-sph').textContent = sph>0 ? fmt(sph) : '–';
+  document.getElementById('out-area').textContent = area>0 ? area.toFixed(2) : '–';
+  document.getElementById('out-band').textContent = band>0 ? band.toFixed(1) : '–';
+  document.getElementById('out-working').innerHTML = sph>0 ? working : '';
+  drawDiagram(ip);
+}
+
+function drawDiagram(ip){
+  const W=640, H=200, top=26, bot=30;
+  let rips=[];
+  if(mode==='single'){
+    const rs = val('rs') || 1;
+    rips=[0, rs, 2*rs];
+  } else {
+    const tw=val('tw')||0.5, gap=val('gap')||1;
+    rips=[0, tw, tw+gap, tw+gap+tw];
+  }
+  const span = rips[rips.length-1] || 1;
+  const scale = Math.min(130, (W-140)/span);
+  const x0=64;
+  const px = m => x0 + m*scale;
+  const ipPx = Math.max(15, Math.min(46, (ip||2)*scale*0.55));
+
+  let tint='';
+  if(mode==='twin'){
+    const tw=val('tw')||0.5;
+    for(let i=0;i+1<rips.length;i+=2){
+      const a=px(rips[i]), b=px(rips[i+1]);
+      tint += `<rect class="band-tint" x="${(a-10).toFixed(1)}" y="${top-8}" width="${(b-a+20).toFixed(1)}" height="${H-top-bot+16}" rx="6"/>`;
+    }
+  }
+
+  let lines='', dots='';
+  rips.forEach(r=>{
+    const x=px(r).toFixed(1);
+    lines += `<line class="rip" x1="${x}" y1="${top-8}" x2="${x}" y2="${H-bot+8}"/>`;
+    for(let y=top; y<=H-bot; y+=ipPx){
+      dots += `<circle class="tree" cx="${x}" cy="${y.toFixed(1)}" r="4"/>`;
+    }
+  });
+
+  function dim(xa,xb,y,label){
+    const a=px(xa), b=px(xb), mid=(a+b)/2;
+    return `<line class="dim" x1="${a}" y1="${y}" x2="${b}" y2="${y}"/>
+      <line class="dim" x1="${a}" y1="${y-4}" x2="${a}" y2="${y+4}"/>
+      <line class="dim" x1="${b}" y1="${y-4}" x2="${b}" y2="${y+4}"/>
+      <rect class="dim-bg" x="${mid-22}" y="${y-9}" width="44" height="15"/>
+      <text class="dim-t" x="${mid}" y="${y+3}" text-anchor="middle">${label}</text>`;
+  }
+
+  let dims='';
+  const yd=H-10;
+  if(mode==='single'){
+    const rs=val('rs'); if(rs>0) dims+=dim(0,rs,yd,rs.toFixed(1));
+  } else {
+    const tw=val('tw'), gap=val('gap');
+    if(tw>0) dims+=dim(0,tw,yd,tw.toFixed(1));
+    if(gap>0) dims+=dim(tw,tw+gap,yd,gap.toFixed(1));
+  }
+  const rx=px(rips[0]);
+  dims += `<line class="dim" x1="${rx-18}" y1="${top}" x2="${rx-18}" y2="${top+ipPx}"/>
+    <line class="dim" x1="${rx-22}" y1="${top}" x2="${rx-14}" y2="${top}"/>
+    <line class="dim" x1="${rx-22}" y1="${top+ipPx}" x2="${rx-14}" y2="${top+ipPx}"/>
+    <text class="dim-t" x="${rx-24}" y="${top+ipPx/2+4}" text-anchor="end">${(ip||0).toFixed(1)}</text>`;
+
+  document.getElementById('diagram').innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Plan view of the rip layout">${tint}${lines}${dots}${dims}</svg>`;
+}
+
+setMode('twin');
+</script>
+</body>
+</html>
