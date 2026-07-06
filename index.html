@@ -34,36 +34,34 @@
 
   .toggle{display:flex;margin:12px 0 14px;border:1px solid var(--border);
     border-radius:var(--radius);overflow:hidden;}
-  .toggle button{flex:1;font-family:var(--mono);font-size:13px;padding:8px 4px;
+  .toggle button{flex:1;font-family:var(--mono);font-size:13px;padding:9px 4px;
     border:0;background:transparent;color:var(--text-2);cursor:pointer;}
   .toggle button+button{border-left:1px solid var(--border);}
   .toggle button[aria-pressed="true"]{background:var(--pine);color:#FBFAF5;}
   @media (prefers-color-scheme: dark){.toggle button[aria-pressed="true"]{color:#14170F;}}
 
-  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-    gap:10px;margin-bottom:14px;}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
   .field label{display:block;font-size:12.5px;font-weight:500;margin-bottom:4px;}
   .field .hint{font-size:11px;color:var(--text-2);margin-top:3px;line-height:1.25;}
   .inp{position:relative;}
   .inp input{width:100%;font-family:var(--mono);font-size:16px;font-weight:500;
     color:var(--ink);background:var(--card);border:1px solid var(--border);
-    border-radius:var(--radius);padding:9px 32px 9px 11px;outline:none;}
+    border-radius:var(--radius);padding:10px 32px 10px 11px;outline:none;}
   .inp input:focus{border-color:var(--pine);box-shadow:0 0 0 3px var(--tint);}
   .inp .unit{position:absolute;right:11px;top:50%;transform:translateY(-50%);
     font-family:var(--mono);font-size:12px;color:var(--muted);pointer-events:none;}
-  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 
   .result{background:var(--card);border:1px solid var(--border);border-radius:11px;
-    padding:14px 16px;margin-bottom:12px;display:flex;align-items:flex-end;
-    justify-content:space-between;gap:16px;flex-wrap:wrap;}
-  .hero .n{font-family:var(--mono);font-size:clamp(38px,13vw,50px);font-weight:600;
+    padding:15px 16px;margin-bottom:12px;}
+  .hero .n{font-family:var(--mono);font-size:clamp(34px,11vw,46px);font-weight:600;
     line-height:0.9;letter-spacing:-0.02em;color:var(--pine);}
   .hero .u{font-family:var(--mono);font-size:11px;letter-spacing:0.09em;
-    text-transform:uppercase;color:var(--text-2);margin-top:5px;}
-  .hero .working{font-family:var(--mono);font-size:12px;color:var(--text-2);margin-top:6px;}
+    text-transform:uppercase;color:var(--text-2);margin-top:6px;}
+  .hero .working{font-family:var(--mono);font-size:12px;color:var(--text-2);margin-top:7px;}
   .hero .working b{color:var(--ochre);font-weight:500;}
-  .stats{display:flex;gap:18px;}
-  .stat .sn{font-family:var(--mono);font-size:17px;font-weight:500;}
+  .stats{display:flex;gap:14px;margin-top:13px;padding-top:13px;border-top:1px solid var(--border);}
+  .stat{flex:1;}
+  .stat .sn{font-family:var(--mono);font-size:18px;font-weight:500;}
   .stat .sl{font-size:11px;color:var(--text-2);}
 
   .plan{background:var(--card);border:1px solid var(--border);border-radius:11px;
@@ -75,7 +73,7 @@
   .tree{fill:var(--pine);}
   .band-tint{fill:var(--tint);}
   .dim{stroke:var(--muted);stroke-width:1;}
-  .dim-t{fill:var(--text-2);font-family:var(--mono);font-size:11px;}
+  .dim-t{fill:var(--text-2);font-family:var(--mono);font-size:12px;}
   .dim-bg{fill:var(--card);}
 
   .note{margin-top:14px;font-size:12px;color:var(--text-2);line-height:1.5;}
@@ -99,22 +97,22 @@
   <div class="fields">
     <div class="field">
       <label for="ip">Interplant spacing</label>
-      <div class="inp"><input id="ip" type="number" inputmode="decimal" value="2.0" min="0.1" step="0.1" oninput="recalc()"><span class="unit">m</span></div>
+      <div class="inp"><input id="ip" type="text" inputmode="decimal" pattern="[0-9.]*" autocomplete="off" autocorrect="off" enterkeyhint="done" value="2.0" oninput="recalc()"><span class="unit">m</span></div>
       <div class="hint">trees along a rip</div>
     </div>
     <div class="field single-only">
       <label for="rs">Row spacing</label>
-      <div class="inp"><input id="rs" type="number" inputmode="decimal" value="3.0" min="0.1" step="0.1" oninput="recalc()"><span class="unit">m</span></div>
+      <div class="inp"><input id="rs" type="text" inputmode="decimal" pattern="[0-9.]*" autocomplete="off" autocorrect="off" enterkeyhint="done" value="3.0" oninput="recalc()"><span class="unit">m</span></div>
       <div class="hint">between adjacent rips</div>
     </div>
     <div class="field twin-only">
       <label for="tw">Twin spacing</label>
-      <div class="inp"><input id="tw" type="number" inputmode="decimal" value="0.8" min="0.1" step="0.1" oninput="recalc()"><span class="unit">m</span></div>
+      <div class="inp"><input id="tw" type="text" inputmode="decimal" pattern="[0-9.]*" autocomplete="off" autocorrect="off" enterkeyhint="done" value="0.8" oninput="recalc()"><span class="unit">m</span></div>
       <div class="hint">the two rips in a pair</div>
     </div>
     <div class="field twin-only">
       <label for="gap">Between-pair gap</label>
-      <div class="inp"><input id="gap" type="number" inputmode="decimal" value="3.6" min="0.1" step="0.1" oninput="recalc()"><span class="unit">m</span></div>
+      <div class="inp"><input id="gap" type="text" inputmode="decimal" pattern="[0-9.]*" autocomplete="off" autocorrect="off" enterkeyhint="done" value="3.6" oninput="recalc()"><span class="unit">m</span></div>
       <div class="hint">pair → next pair</div>
     </div>
   </div>
@@ -126,8 +124,8 @@
       <div class="working" id="out-working"></div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="sn" id="out-area">–</div><div class="sl">m²/stem</div></div>
-      <div class="stat"><div class="sn" id="out-band">–</div><div class="sl" id="lbl-band">band pitch</div></div>
+      <div class="stat"><div class="sn" id="out-area">–</div><div class="sl">m² per stem</div></div>
+      <div class="stat"><div class="sn" id="out-band">–</div><div class="sl" id="lbl-band">band pitch (m)</div></div>
     </div>
   </div>
 
@@ -136,7 +134,7 @@
     <div class="cap">plan view — rips vertical, trees as dots</div>
   </div>
 
-  <p class="note"><b>Twin distance:</b> if your ripper's pass interval is fixed, the band pitch should match it and widening the twins won't change stems/ha — it only adds stems when the between-pair gap stays fixed.</p>
+  <p class="note"><b>Twin distance:</b> if your ripper's pass interval is fixed, the band pitch above should match it and widening the twins won't change stems/ha — it only adds stems when the between-pair gap stays fixed.</p>
 
   <footer>works offline · print to save as pdf</footer>
 </div>
@@ -149,7 +147,7 @@ function setMode(m){
   document.querySelectorAll('.twin-only').forEach(e=>e.style.display=m==='twin'?'':'none');
   document.getElementById('btn-single').setAttribute('aria-pressed',m==='single');
   document.getElementById('btn-twin').setAttribute('aria-pressed',m==='twin');
-  document.getElementById('lbl-band').textContent=m==='single'?'row spacing':'band pitch';
+  document.getElementById('lbl-band').textContent=m==='single'?'row spacing (m)':'band pitch (m)';
   recalc();
 }
 function val(id){const v=parseFloat(document.getElementById(id).value);return(isFinite(v)&&v>0)?v:0;}
